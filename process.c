@@ -5,9 +5,9 @@
 #include <sys/syscall.h>
 #include "include/all.h"
 
-int main(int argv, char **argv){
+int main(int argc, char **argv){
 	if(argc != 3){
-		fprintf(stderr, "usage: ./program_name process_name excute_time")
+		fprintf(stderr, "usage: ./program_name process_name excute_time");
 		return 1;
 	}
 
@@ -19,7 +19,7 @@ int main(int argv, char **argv){
 	long long start, end;
 	start = syscall(334);
 	for(int i = 0; i < excute_time; i++)
-		unit_time()
+		unit_time();
 	end = syscall(334);
 
 	syscall(335, pid, start, end);

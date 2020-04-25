@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 /*#include <sched.h>*/ //for certain CPU
 #include "include/structure.h"
+#include "include/all.h"
 #include "include/fifo.h"
 #include "include/rr.h"
 #include "include/sjf.h"
@@ -15,6 +17,7 @@ void unknown_policy(){
 }
 
 int main(){
+	set_cpu(getpid(), 0);
 
 	//read input
 	char policy[5];
