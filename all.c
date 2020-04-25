@@ -8,3 +8,7 @@ void unit_time(){
 	for(i = 0; i < 1000000UL; i++)
 		;
 }
+
+void fork_process(pid_t* pid, char* N, int T){
+
+}
