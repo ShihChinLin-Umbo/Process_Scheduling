@@ -11,6 +11,15 @@ void unit_time(){
 		;
 }
 
+void set_priority(pid_t pid, int priority){
+	struct sched_param param;
+	param.sched_priority = priority;
+	if(sched_setscheduler(pid, SCHED_FIFO, &param) != 0){
+		fprintf(stderr, "Failed to set priority!\n");
+	}
+	return;
+}
+
 void set_cpu(pid_t pid, int n){
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
@@ -18,12 +27,7 @@ void set_cpu(pid_t pid, int n){
 	if(sched_setaffinity(pid, sizeof(mask), &mask) != 0){
 		fprintf(stderr, "Failed to set cpu!\n");
 	}
-
-	struct sched_param param;
-	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-	if(sched_setscheduler(pid, SCHED_FIFO, &param) != 0){
-		fprintf(stderr, "Failed to set priority!\n");
-	}
+	return;
 }
 
 void fork_process(pid_t* pid, char* N, int T){
@@ -35,4 +39,6 @@ void fork_process(pid_t* pid, char* N, int T){
 		}
 	}
 	set_cpu(*pid, 1);
+	set_priority(*pid, 30);
+	return;
 }
