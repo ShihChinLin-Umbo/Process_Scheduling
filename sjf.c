@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include "include/structure.h"
@@ -8,18 +9,38 @@
 #include "include/sort.h"
 #include "include/all.h"
 
-int running_sjf = 0;
+int ready_sjf = 0;
 int done_sjf = 0;
+int running_sjf = 0;
+pid_t pid_sjf[10000];
+HEAP_NODE *head_sjf = NULL;
+HEAP_NODE *run_node_sjf = NULL;
 
 void child_handler_sjf(){
 	wait(NULL);
-	running_sjf = 0;
 	done_sjf++;
+	running_sjf = 0;
+}
+
+void pop(){
+	head_sjf = heap_pop(head_sjf);
+	run_node_sjf = head_sjf->pop;
+	if(head_sjf->pop == head_sjf){
+		head_sjf = NULL;
+	}
+	return;
+}
+
+void adjust_proirity_sjf(){
+	if(ready_sjf > done_sjf){
+		running_sjf = 1;
+		set_priority(getpid(), 10);
+		set_priority(pid_sjf[run_node_sjf->index], 99);
+	}
+	return;
 }
 
 int sjf(Input *in, int num){
-	printf("SJF\n");
-	HEAP_NODE *head = NULL;
 	int arr[10000];
 	pid_t pid[10000];
 	for(int i = 0; i < num; i++)
@@ -33,27 +54,16 @@ int sjf(Input *in, int num){
 	sa.sa_handler = child_handler_sjf;
 	sigaction(SIGCHLD, &sa, NULL);
 
-	int ready, t;
-	for(ready = 0, t = 0; done_sjf < num; t++){
-		while(ready < num && in->p[arr[ready]].R <= t){
-			head = heap_push(head, in->p[arr[ready]], in->p[arr[ready]].T);
-			printf("\n%d\n", t);
-			print_heap(head);
-			printf("\n");
-			ready++;
-		}
-
-		if(running_sjf == 0){
-			head = heap_pop(head);
-			if(head != NULL){
-				running_sjf = 1;
-				printf("fork at %d\n", t);
-				fork_process(&pid[done_sjf], head->pop->p.N, head->pop->p.T);
-				if(head->pop == head)
-					head = NULL;
-			}
-		}
-
-		unit_time();
+	int t;
+	for(t = 0; done_sjf < num; t++){
+		while(ready_sjf < num && in->p[arr[ready_sjf]].R <= t){
+			head_sjf = heap_push(head_sjf, in->p[arr[ready_sjf]], in->p[arr[ready_sjf]].T, arr[ready_sjf]);
+			fork_process(&pid_sjf[ready_sjf], in->p[arr[ready_sjf]].N, in->p[arr[ready_sjf]].T, getpid());
+			ready_sjf++;
+		}	
+		if(running_sjf == 0 && head_sjf != NULL)
+			pop();
+		adjust_proirity_sjf();
 	}
+	return 0;
 }

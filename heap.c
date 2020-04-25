@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include "include/structure.h"
 
-HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority){
+HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority, int index){
 	HEAP_NODE *new;
 	if(head == NULL){
 		head = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
 		head->p = p;
 		head->priority = priority;
+		head->index = index;
 		head->size = 0;
 		head->left = NULL;
 		head->right = NULL;
@@ -19,6 +20,7 @@ HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority){
 		new = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
 		new->p = p;
 		new->priority = priority;
+		new->index = index;
 		new->size = 0;
 		new->left = NULL;
 		new->right = NULL;
@@ -31,6 +33,7 @@ HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority){
 		new = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
 		new->p = p;
 		new->priority = priority;
+		new->index = index;
 		new->size = 0;
 		new->left = NULL;
 		new->right = NULL;
@@ -41,11 +44,11 @@ HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority){
 	}
 	if(head->left->size <= head->right->size){
 		head->size++;
-		new = insert_node(head->left, p, priority);
+		new = insert_node(head->left, p, priority, index);
 	}
 	else{
 		head->size++;
-		new = insert_node(head->right, p, priority);
+		new = insert_node(head->right, p, priority, index);
 	}
 	return new;
 }
@@ -61,7 +64,7 @@ void swap_node(HEAP_NODE* a, HEAP_NODE* b){
 	temp->left = a->left;
 	temp->right = a->right;
 
-	if(a = b->left){
+	if(a == b->left){
 		a->left = b;
 		a->right = b->right;
 		if(a->right != NULL)
@@ -98,6 +101,10 @@ void swap_node(HEAP_NODE* a, HEAP_NODE* b){
 HEAP_NODE* sort_node(HEAP_NODE* head, HEAP_NODE* new){
 	if(new == head)
 		return head;
+	if(new->parent == head && new->priority < head->priority){
+		swap_node(new, head);
+		return new;
+	}
 	if(new->priority < new->parent->priority){
 		swap_node(new, new->parent);
 		head = sort_node(head, new);
@@ -177,8 +184,8 @@ void print_heap(HEAP_NODE *head){
 	return;
 }
 
-HEAP_NODE* heap_push(HEAP_NODE* head, Process p, int priority){
-	HEAP_NODE *new = insert_node(head, p, priority);
+HEAP_NODE* heap_push(HEAP_NODE* head, Process p, int priority, int index){
+	HEAP_NODE *new = insert_node(head, p, priority, index);
 	if(head == NULL){
 		head = new;
 	}

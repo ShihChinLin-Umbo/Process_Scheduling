@@ -14,6 +14,7 @@ typedef struct input Input;
 struct heap_node{
 	Process p;
 	int priority;
+	int index;
 	int size;
 	struct heap_node *left;
 	struct heap_node *right;
