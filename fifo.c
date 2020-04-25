@@ -8,13 +8,13 @@
 #include "include/sort.h"
 #include "include/all.h"
 
-int running = 0;
-int done = 0;
+int running_fifo = 0;
+int done_fifo = 0;
 
-void child_handler(){
+void child_handler_fifo(){
 	wait(NULL);
-	running = 0;
-	done++;
+	running_fifo = 0;
+	done_fifo++;
 }
 
 int fifo(Input *in, int num){
@@ -29,22 +29,21 @@ int fifo(Input *in, int num){
 	struct sigaction sa;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	sa.sa_handler = child_handler;
+	sa.sa_handler = child_handler_fifo;
 	sigaction(SIGCHLD, &sa, NULL);
 
 	int ready, t;
-	for(ready = 0, t = 0; done < num; t++){
+	for(ready = 0, t = 0; done_fifo < num; t++){
 		while(ready < num && in->p[arr[ready]].R <= t){
 			head = heap_push(head, in->p[arr[ready]], in->p[arr[ready]].R);
 			ready++;
-
 		}
 
-		if(running == 0){
+		if(running_fifo == 0){
 			head = heap_pop(head);
 			if(head != NULL){
-				running = 1;
-				fork_process(&pid[done], head->pop->p.N, head->pop->p.T);
+				running_fifo = 1;
+				fork_process(&pid[done_fifo], head->pop->p.N, head->pop->p.T);
 				if(head->pop == head)
 					head = NULL;
 			}
