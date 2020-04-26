@@ -5,7 +5,6 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "include/structure.h"
-#include "include/heap.h"
 #include "include/sort.h"
 #include "include/all.h"
 
@@ -18,7 +17,7 @@ void child_handler_fifo(){
 	done_fifo++;
 }
 
-int adjust_proirity_fifo(){
+int adjust_proirity_fifo(void){
 	if(ready_fifo > done_fifo){
 		set_priority(pid_fifo[done_fifo], 99);
 		return 1;
@@ -44,7 +43,6 @@ int fifo(Input *in, int num){
 		while(ready_fifo < num && in->p[arr[ready_fifo]].R <= t){
 			fork_process(&pid_fifo[ready_fifo], in->p[arr[ready_fifo]].N, in->p[arr[ready_fifo]].T);
 			ready_fifo++;
-			
 		}
 		child = adjust_proirity_fifo();
 		if(child == 0)

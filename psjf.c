@@ -20,7 +20,7 @@ void child_handler_psjf(){
 	done_psjf++;
 }
 
-void pop_psjf(){
+void pop_psjf(void){
 	head_psjf = heap_pop(head_psjf);
 	run_node_psjf = head_psjf->pop;
 	if(head_psjf->pop == head_psjf){

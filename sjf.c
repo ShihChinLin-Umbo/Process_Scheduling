@@ -22,7 +22,7 @@ void child_handler_sjf(){
 	running_sjf = 0;
 }
 
-void pop_sjf(){
+void pop_sjf(void){
 	head_sjf = heap_pop(head_sjf);
 	run_node_sjf = head_sjf->pop;
 	if(head_sjf->pop == head_sjf){
@@ -31,7 +31,7 @@ void pop_sjf(){
 	return;
 }
 
-int adjust_proirity_sjf(){
+int adjust_proirity_sjf(void){
 	if(ready_sjf > done_sjf){
 		running_sjf = 1;
 		set_priority(pid_sjf[run_node_sjf->index], 99);

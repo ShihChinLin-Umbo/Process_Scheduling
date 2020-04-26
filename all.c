@@ -5,7 +5,7 @@
 #include <sched.h>
 #include "include/structure.h"
 
-void unit_time(){
+void unit_time(void){
 	volatile unsigned long i;
 	for(i = 0; i < 1000000UL; i++)
 		;
