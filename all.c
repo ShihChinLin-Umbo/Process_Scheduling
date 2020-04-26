@@ -30,12 +30,11 @@ void set_cpu(pid_t pid, int n){
 	return;
 }
 
-void fork_process(pid_t* pid, char* N, int T, pid_t parent){
+void fork_process(pid_t* pid, char* N, int T){
 	if((*pid = fork()) == 0){
-		char T_string[20], parent_string[20];
+		char T_string[20];
 		sprintf(T_string, "%d", T);
-		sprintf(parent_string, "%d", parent);
-		if(execl("./process", "./process", N, T_string, parent_string, (char *)0) == -1){
+		if(execl("./process", "./process", N, T_string, (char *)0) == -1){
 			fprintf(stderr, "Failed to exec!\n");
 		}
 	}

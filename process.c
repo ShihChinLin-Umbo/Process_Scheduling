@@ -6,14 +6,13 @@
 #include "include/all.h"
 
 int main(int argc, char **argv){
-	if(argc != 4){
-		fprintf(stderr, "Only %d argv.\nusage: ./program_name process_name excute_time, parent_pid\n", argc);
+	if(argc != 3){
+		fprintf(stderr, "Only %d argv.\nusage: ./program_name process_name excute_time\n", argc);
 		return 1;
 	}
 
 	char *name = argv[1];
 	int excute_time = atoi(argv[2]);
-	pid_t parent = atoi(argv[3]);
 	pid_t pid = getpid();
 	printf("%s %d\n", name, pid);
 
@@ -23,7 +22,6 @@ int main(int argc, char **argv){
 		unit_time();
 		if(i != excute_time -1){
 			set_priority(pid, 1);
-			set_priority(parent, 99);
 		}
 	}
 	end = syscall(334);

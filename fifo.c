@@ -18,12 +18,12 @@ void child_handler_fifo(){
 	done_fifo++;
 }
 
-void adjust_proirity_fifo(){
+int adjust_proirity_fifo(){
 	if(ready_fifo > done_fifo){
-		set_priority(getpid(), 10);
 		set_priority(pid_fifo[done_fifo], 99);
+		return 1;
 	}
-	return;
+	return 0;
 }
 
 int fifo(Input *in, int num){
@@ -39,14 +39,16 @@ int fifo(Input *in, int num){
 	sa.sa_handler = child_handler_fifo;
 	sigaction(SIGCHLD, &sa, NULL);
 
-	int t;
+	int t, child;
 	for(t = 0; done_fifo < num; t++){
 		while(ready_fifo < num && in->p[arr[ready_fifo]].R <= t){
-			fork_process(&pid_fifo[ready_fifo], in->p[arr[ready_fifo]].N, in->p[arr[ready_fifo]].T, getpid());
+			fork_process(&pid_fifo[ready_fifo], in->p[arr[ready_fifo]].N, in->p[arr[ready_fifo]].T);
 			ready_fifo++;
 			
 		}
-		adjust_proirity_fifo();
+		child = adjust_proirity_fifo();
+		if(child == 0)
+			unit_time();
 	}
 	return 0;
 }

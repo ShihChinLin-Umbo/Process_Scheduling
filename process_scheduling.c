@@ -18,7 +18,7 @@ void unknown_policy(){
 
 int main(){
 	set_cpu(getpid(), 0);
-	set_priority(getpid(), 99);
+	set_priority(getpid(), 50);
 
 	//read input
 	char policy[5];
