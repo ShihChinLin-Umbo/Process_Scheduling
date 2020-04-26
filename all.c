@@ -16,6 +16,7 @@ void set_priority(pid_t pid, int priority){
 	param.sched_priority = priority;
 	if(sched_setscheduler(pid, SCHED_FIFO, &param) != 0){
 		fprintf(stderr, "Failed to set priority!\n");
+		exit(1);
 	}
 	return;
 }

@@ -22,7 +22,7 @@ void child_handler_sjf(){
 	running_sjf = 0;
 }
 
-void pop(){
+void pop_sjf(){
 	head_sjf = heap_pop(head_sjf);
 	run_node_sjf = head_sjf->pop;
 	if(head_sjf->pop == head_sjf){
@@ -62,7 +62,7 @@ int sjf(Input *in, int num){
 			ready_sjf++;
 		}	
 		if(running_sjf == 0 && head_sjf != NULL)
-			pop();
+			pop_sjf();
 		child = adjust_proirity_sjf();
 		if(child == 0)
 			unit_time();

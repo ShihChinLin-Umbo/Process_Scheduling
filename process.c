@@ -15,6 +15,7 @@ int main(int argc, char **argv){
 	int excute_time = atoi(argv[2]);
 	pid_t pid = getpid();
 	printf("%s %d\n", name, pid);
+	fflush(stdout);
 
 	long long start, end;
 	start = syscall(334);
