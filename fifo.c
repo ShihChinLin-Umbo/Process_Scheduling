@@ -17,9 +17,8 @@ void child_handler_fifo(){
 	done_fifo++;
 }
 
-int adjust_proirity_fifo(int t){
+int adjust_proirity_fifo(void){
 	if(ready_fifo > done_fifo){
-		printf("Run %d at time %d\n", done_fifo+1, t);
 		set_priority(pid_fifo[done_fifo], 99);
 		return 1;
 	}
@@ -45,7 +44,7 @@ int fifo(Input *in, int num){
 			fork_process(&pid_fifo[ready_fifo], in->p[arr[ready_fifo]].N, in->p[arr[ready_fifo]].T);
 			ready_fifo++;
 		}
-		child = adjust_proirity_fifo(t);
+		child = adjust_proirity_fifo();
 		if(child == 0)
 			unit_time();
 	}
