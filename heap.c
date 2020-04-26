@@ -112,14 +112,14 @@ HEAP_NODE* sort_node(HEAP_NODE* head, HEAP_NODE* new){
 	return head;
 }
 
-HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size){
+HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 	HEAP_NODE *temp;
 	temp = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
 	temp->left = min->left;
 	temp->right = min->right;
 	temp->size = min->size;
 	min->size = size - 1;
-	if(min == head->left){
+	if(left_right == 0){
 		min->right = head->right;
 		if(min->right != NULL)
 			min->right->parent = min;
@@ -134,10 +134,10 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size){
 		}
 		else{
 			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
-				min->left = up(min, temp->left, temp->size);
+				min->left = up(min, temp->left, temp->size, 0);
 			}
 			else{
-				min->left = up(min, temp->right, temp->size);
+				min->left = up(min, temp->right, temp->size, 1);
 			}
 		}
 		if(min->left != NULL){
@@ -159,10 +159,10 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size){
 		}
 		else{
 			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
-				min->right = up(min, temp->left, temp->size);
+				min->right = up(min, temp->left, temp->size, 0);
 			}
 			else{
-				min->right = up(min, temp->right, temp->size);
+				min->right = up(min, temp->right, temp->size, 1);
 			}
 		}
 		if(min->right != NULL){
@@ -176,7 +176,7 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size){
 void print_heap(HEAP_NODE *head){
 	if(head == NULL)
 		return;
-	printf("Priority: %d, Size: %d\n", head->priority, head->size);
+	printf("Index: %d, Priority: %d, Size: %d\n", head->index+1, head->priority, head->size);
 	printf("left\n");
 	print_heap(head->left);
 	printf("right\n");
@@ -209,10 +209,10 @@ HEAP_NODE* heap_pop(HEAP_NODE* head){
 	}
 	else{
 		if(head->left->priority < head->right->priority || (head->left->priority == head->right->priority && head->left->size >= head->right->size)){
-			head = up(head, head->left, head->size);
+			head = up(head, head->left, head->size, 0);
 		}
 		else{
-			head = up(head, head->right, head->size);
+			head = up(head, head->right, head->size, 1);
 		}
 	}
 	head->pop = pop;
