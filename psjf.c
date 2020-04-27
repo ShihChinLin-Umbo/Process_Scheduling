@@ -29,7 +29,7 @@ void pop_psjf(void){
 	return;
 }
 
-int adjust_proirity_psjf(Input *in, int t){
+int adjust_proirity_psjf(Input *in){
 	if(ready_psjf > done_psjf){
 		pop_psjf();
 		in->p[run_node_psjf->index].T--;
@@ -62,7 +62,7 @@ int psjf(Input *in, int num){
 			fork_process(&pid_psjf[ready_psjf], in->p[arr[ready_psjf]].N, in->p[arr[ready_psjf]].T);
 			ready_psjf++;
 		}
-		child = adjust_proirity_psjf(in, t);
+		child = adjust_proirity_psjf(in);
 		if(child == 0)
 			unit_time();
 	}
