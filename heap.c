@@ -101,11 +101,11 @@ void swap_node(HEAP_NODE* a, HEAP_NODE* b){
 HEAP_NODE* sort_node(HEAP_NODE* head, HEAP_NODE* new){
 	if(new == head)
 		return head;
-	if(new->parent == head && new->priority < head->priority){
+	if(new->parent == head && (new->priority < head->priority || (new->priority == head->priority && new->index < head->index))){
 		swap_node(new, head);
 		return new;
 	}
-	if(new->priority < new->parent->priority){
+	if(new->priority < new->parent->priority || (new->priority == new->parent->priority && new->index < new->parent->index)){
 		swap_node(new, new->parent);
 		head = sort_node(head, new);
 	}
@@ -133,7 +133,7 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 			min->left = temp->left;
 		}
 		else{
-			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
+			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->index < temp->right->index)){
 				min->left = up(min, temp->left, temp->size, 0);
 			}
 			else{
@@ -158,7 +158,7 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 			min->right = temp->left;
 		}
 		else{
-			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
+			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->index < temp->right->index)){
 				min->right = up(min, temp->left, temp->size, 0);
 			}
 			else{
@@ -208,7 +208,7 @@ HEAP_NODE* heap_pop(HEAP_NODE* head){
 		head = head->right;
 	}
 	else{
-		if(head->left->priority < head->right->priority || (head->left->priority == head->right->priority && head->left->size >= head->right->size)){
+		if(head->left->priority < head->right->priority || (head->left->priority == head->right->priority && head->left->index < head->right->index)){
 			head = up(head, head->left, head->size, 0);
 		}
 		else{
