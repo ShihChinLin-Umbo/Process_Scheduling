@@ -5,7 +5,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "include/structure.h"
-#include "include/heap.h"
+#include "include/heap_sjf.h"
 #include "include/sort.h"
 #include "include/all.h"
 
@@ -23,7 +23,7 @@ void child_handler_sjf(){
 }
 
 void pop_sjf(void){
-	head_sjf = heap_pop(head_sjf);
+	head_sjf = heap_pop_sjf(head_sjf);
 	run_node_sjf = head_sjf->pop;
 	if(head_sjf->pop == head_sjf){
 		head_sjf = NULL;
@@ -57,7 +57,7 @@ int sjf(Input *in, int num){
 	int t, child;
 	for(t = 0; done_sjf < num; t++){
 		while(ready_sjf < num && in->p[arr[ready_sjf]].R <= t){
-			head_sjf = heap_push(head_sjf, in->p[arr[ready_sjf]], in->p[arr[ready_sjf]].T, arr[ready_sjf]);
+			head_sjf = heap_push_sjf(head_sjf, in->p[arr[ready_sjf]], in->p[arr[ready_sjf]].T, arr[ready_sjf]);
 			fork_process(&pid_sjf[ready_sjf], in->p[arr[ready_sjf]].N, in->p[arr[ready_sjf]].T);
 			ready_sjf++;
 		}	

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "include/structure.h"
 
-HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority, int index){
+HEAP_NODE* insert_node_sjf(HEAP_NODE* head, Process p, int priority, int index){
 	HEAP_NODE *new;
 	if(head == NULL){
 		head = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
@@ -44,16 +44,16 @@ HEAP_NODE* insert_node(HEAP_NODE* head, Process p, int priority, int index){
 	}
 	if(head->left->size <= head->right->size){
 		head->size++;
-		new = insert_node(head->left, p, priority, index);
+		new = insert_node_sjf(head->left, p, priority, index);
 	}
 	else{
 		head->size++;
-		new = insert_node(head->right, p, priority, index);
+		new = insert_node_sjf(head->right, p, priority, index);
 	}
 	return new;
 }
 
-void swap_node(HEAP_NODE* a, HEAP_NODE* b){
+void swap_node_sjf(HEAP_NODE* a, HEAP_NODE* b){
 	int temp_size;
 	temp_size = a->size;
 	a->size = b->size;
@@ -98,21 +98,21 @@ void swap_node(HEAP_NODE* a, HEAP_NODE* b){
 	return;
 }
 
-HEAP_NODE* sort_node(HEAP_NODE* head, HEAP_NODE* new){
+HEAP_NODE* sort_node_sjf(HEAP_NODE* head, HEAP_NODE* new){
 	if(new == head)
 		return head;
-	if(new->parent == head && new->priority < head->priority){
-		swap_node(new, head);
+	if(new->parent == head && (new->priority < head->priority || (new->priority == head->priority && new->index < head->index))){
+		swap_node_sjf(new, head);
 		return new;
 	}
-	if(new->priority < new->parent->priority){
-		swap_node(new, new->parent);
-		head = sort_node(head, new);
+	if(new->priority < new->parent->priority || (new->priority == new->parent->priority && new->index < new->parent->index)){
+		swap_node_sjf(new, new->parent);
+		head = sort_node_sjf(head, new);
 	}
 	return head;
 }
 
-HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
+HEAP_NODE* up_sjf(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 	HEAP_NODE *temp;
 	temp = (HEAP_NODE *)malloc(sizeof(HEAP_NODE));
 	temp->left = min->left;
@@ -133,11 +133,11 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 			min->left = temp->left;
 		}
 		else{
-			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
-				min->left = up(min, temp->left, temp->size, 0);
+			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->index < temp->right->index)){
+				min->left = up_sjf(min, temp->left, temp->size, 0);
 			}
 			else{
-				min->left = up(min, temp->right, temp->size, 1);
+				min->left = up_sjf(min, temp->right, temp->size, 1);
 			}
 		}
 		if(min->left != NULL){
@@ -158,11 +158,11 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 			min->right = temp->left;
 		}
 		else{
-			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->size >= temp->right->size)){
-				min->right = up(min, temp->left, temp->size, 0);
+			if(temp->left->priority < temp->right->priority || (temp->left->priority == temp->right->priority && temp->left->index < temp->right->index)){
+				min->right = up_sjf(min, temp->left, temp->size, 0);
 			}
 			else{
-				min->right = up(min, temp->right, temp->size, 1);
+				min->right = up_sjf(min, temp->right, temp->size, 1);
 			}
 		}
 		if(min->right != NULL){
@@ -173,27 +173,27 @@ HEAP_NODE* up(HEAP_NODE* head, HEAP_NODE* min, int size, int left_right){
 	return min;
 }
 
-void print_heap(HEAP_NODE *head){
+void print_heap_sjf(HEAP_NODE *head){
 	if(head == NULL)
 		return;
 	printf("Index: %d, Priority: %d, Size: %d\n", head->index+1, head->priority, head->size);
 	printf("left\n");
-	print_heap(head->left);
+	print_heap_sjf(head->left);
 	printf("right\n");
-	print_heap(head->right);
+	print_heap_sjf(head->right);
 	return;
 }
 
-HEAP_NODE* heap_push(HEAP_NODE* head, Process p, int priority, int index){
-	HEAP_NODE *new = insert_node(head, p, priority, index);
+HEAP_NODE* heap_push_sjf(HEAP_NODE* head, Process p, int priority, int index){
+	HEAP_NODE *new = insert_node_sjf(head, p, priority, index);
 	if(head == NULL){
 		head = new;
 	}
-	HEAP_NODE *min = sort_node(head, new);
+	HEAP_NODE *min = sort_node_sjf(head, new);
 	return min;
 }
 
-HEAP_NODE* heap_pop(HEAP_NODE* head){
+HEAP_NODE* heap_pop_sjf(HEAP_NODE* head){
 	if(head == NULL)
 		return NULL;
 
@@ -208,11 +208,11 @@ HEAP_NODE* heap_pop(HEAP_NODE* head){
 		head = head->right;
 	}
 	else{
-		if(head->left->priority < head->right->priority || (head->left->priority == head->right->priority && head->left->size >= head->right->size)){
-			head = up(head, head->left, head->size, 0);
+		if(head->left->priority < head->right->priority || (head->left->priority == head->right->priority && head->left->index < head->right->index)){
+			head = up_sjf(head, head->left, head->size, 0);
 		}
 		else{
-			head = up(head, head->right, head->size, 1);
+			head = up_sjf(head, head->right, head->size, 1);
 		}
 	}
 	head->pop = pop;
